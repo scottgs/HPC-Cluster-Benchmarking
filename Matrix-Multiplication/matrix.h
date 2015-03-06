@@ -11,7 +11,9 @@
 
 class Index {
 public:
-  Index(uint row, uint col) : row(row), col(col)
+  Index(uint row, uint col) : 
+    row(row), 
+    col(col)
   {
 
   }
@@ -26,8 +28,8 @@ public:
 
   uint row, col;
 
-  // Use Boost Access to allow serialization to access non-public data members.
-  friend class serialize;
+  // Use Boost Access to allow serialization to access data members.
+  friend class boost::serialization::access;
 
   template<class Archive>
   void serialize(Archive & a, const uint version) {
@@ -39,7 +41,9 @@ public:
 
 class Size {
 public:
-  Size(uint rows, uint cols) : rows(rows), cols(cols) 
+  Size(uint rows, uint cols) : 
+    rows(rows), 
+    cols(cols) 
   {
 
   }
@@ -54,7 +58,7 @@ public:
 
   uint rows, cols;
 
-  friend std::ostream& operator<< (std::ostream & os, const Size & size);
+  inline friend std::ostream& operator<< (std::ostream & os, const Size & size);
 
   // Use Boost Access to allow serialization to access data members.
   friend class boost::serialization::access;
@@ -70,19 +74,17 @@ public:
 class Matrix {
   Matrix();
   Matrix(const Size& size);
-  ~Matrix();
 
   // Overload a few operators
   Matrix operator=(const Matrix & rhs);
   Matrix operator*(const Matrix & rhs);
-  bool operator==(const Matrix & rhs);
-  // To print the matrix
-  friend std::ostream& operator << (std::ostream & os, const Matrix & mat);
+  inline bool operator==(const Matrix & rhs) { return data == rhs.data; }
+  inline friend std::ostream& operator << (std::ostream & os, const Matrix & mat);
 
-  std::vector<int> get_row(int row) const;
-  std::vector<int> get_col(int col) const;
+  inline std::vector<int> get_row(uint row) const { return data[row]; }
+  inline std::vector<int> get_col(uint col) const;
 
-  void insert_sub_mat(const Matrix & mat);
+  inline void insert_sub_mat(const Matrix & mat);
   void square_mult(Matrix & mat); // For squaring matrices
 
   Size size;
@@ -107,11 +109,9 @@ class Matrix {
 class Matrix_Section {
 public:
   Matrix_Section();
-  ~Matrix_Section();
+  inline Matrix_Section operator=(const Matrix_Section & rhs);
 
-  Matrix_Section operator=(const Matrix_Section & rhs);
-
-  int row_index, col_index;
+  uint row_index, col_index;
   std::vector<std::vector<int> > row_data, col_data;
   
   // Use Boost Access to allow serialization to access data members.
