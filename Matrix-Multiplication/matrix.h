@@ -72,19 +72,20 @@ public:
 };
 
 class Matrix {
+public:
   Matrix();
   Matrix(const Size& size);
 
   // Overload a few operators
   Matrix operator=(const Matrix & rhs);
   Matrix operator*(const Matrix & rhs);
-  inline bool operator==(const Matrix & rhs) { return data == rhs.data; }
-  inline friend std::ostream& operator << (std::ostream & os, const Matrix & mat);
+  bool operator==(const Matrix & rhs) { return data == rhs.data; }
+  friend std::ostream& operator << (std::ostream & os, const Matrix & mat);
 
   inline std::vector<int> get_row(uint row) const { return data[row]; }
-  inline std::vector<int> get_col(uint col) const;
+  std::vector<int> get_col(uint col) const;
 
-  inline void insert_sub_mat(const Matrix & mat);
+  void insert_sub_mat(const Matrix & mat);
   void square_mult(Matrix & mat); // For squaring matrices
 
   Size size;
@@ -110,6 +111,7 @@ class Matrix_Section {
 public:
   Matrix_Section();
   inline Matrix_Section operator=(const Matrix_Section & rhs);
+  void calculate_vector_prod(Matrix & mat);
 
   uint row_index, col_index;
   std::vector<std::vector<int> > row_data, col_data;

@@ -11,10 +11,10 @@ Matrix::Matrix() :
 
 }
 
-Matrix::Matrix(const Size& size) : 
-	size(size), 
-	top_left(top_left), 
-	lower_right(lower_right)
+Matrix::Matrix(const Size & size) : 
+	size(Size(0,0)																																														), 
+	top_left(0,0), 
+	lower_right(0,0)
 {
 	// Make sure it's a square matrix.
 	assert(size.rows == size.cols);
@@ -81,7 +81,7 @@ Matrix Matrix::operator*(const Matrix& rhs) {
   return result;
 }
 
-inline std::vector<int> Matrix::get_col(uint col) const {
+std::vector<int> Matrix::get_col(uint col) const {
 	std::vector<int> col_data;
 	const uint num_rows = size.rows;
 	for (uint row = 0; row < num_rows; ++row) 
@@ -90,7 +90,7 @@ inline std::vector<int> Matrix::get_col(uint col) const {
 	return col_data;
 }
 
-inline void Matrix::insert_sub_mat(const Matrix & mat) {
+void Matrix::insert_sub_mat(const Matrix & mat) {
 	const uint num_rows = mat.size.rows;
 	const uint num_cols = mat.size.cols;
 	const uint row_offset = mat.top_left.row;
@@ -145,4 +145,27 @@ inline Matrix_Section Matrix_Section::operator=(const Matrix_Section & rhs) {
   	}
 
 	return *this;
+}
+
+/**
+ * TODO: Can do more clever things to speed up the matrix product
+ */
+void Matrix_Section::calculate_vector_prod(Matrix & mat) {
+  assert(row_data.size() == col_data.size());
+
+  const uint size = row_data.size();
+
+  mat.top_left = Index(row_index, col_index);
+  mat.lower_right = Index(row_index + size, col_index + size);
+
+  uint temp_sum = 0; // To get the reduction
+  for (uint row = 0; row < size; ++row) {
+  	for (uint col = 0; col < size; ++col) {
+  		temp_sum = 0;
+  		for (uint k = 0; k < row_data[0].size(); ++k) {
+  			temp_sum += row_data[row][k] * col_data[col][k];
+  		}
+  		mat.data[row][col] = temp_sum;
+  	}
+  }
 }
