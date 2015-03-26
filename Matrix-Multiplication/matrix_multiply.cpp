@@ -1,58 +1,134 @@
-#include <assert.h>
-#include <chrono>
+#include <algorithm> // for min
 #include <iostream>
-#include <limits> // for INT_MAX
 
-#include <boost/random/variate_generator.hpp>
-#include <boost/random/uniform_real.hpp>
-#include <boost/random/mersenne_twister.hpp>
+#include <stdlib.h>
+#include <stdio.h>
+#include <mpi.h>
 
-#include "matrix.h"
+// #define LIN(x, y, dimX) ((x) + (y)*(dimX))
+// #define IDX(A, row, col) ((A)->M[LIN((col), (row), (A)->numCols)])
 
-inline int gen_random_int() {
-	boost::mt19937 rng;
-    boost::uniform_real<int> u(0, INT_MAX);
-    boost::variate_generator<boost::mt19937&, boost::uniform_real<int> > int_gen(rng, u);
-    return int_gen();
+struct {
+    double * M;
+    int numRows, 
+        numCols;
+} Matrix;
+
+inline int lin (int x, int y, int dimX) {
+    return x + (y * dimX);
 }
 
-inline void generate_random_vector(Matrix & matrix) {
-    const uint num_rows = matrix.size.rows;
-	const uint num_cols = matrix.size.cols;
-
-	for (uint i = 0; i < num_rows; ++i) {
-		for (uint j = 0; j < num_cols; ++j) {
-			matrix.data[i][j] = gen_random_int(); 
-		}
-	}
+inline int get_index(const Matrix * mat, const int row, const int col) {
+    return A->M[lin(col, row, A->numCols)];
 }
 
-// TODO: use processor timings rather than waiting times
-int main(int argc, const char* argv[]) {
-	if (argc < 2) {
-		std::cout << "Invalid number of arguments. The second argument should be the size of the matrices to multiply." << std::endl;
-		exit(1);
-	}
+void matrix_multiply(Matrix * C, const Matrix * A, const Matrix * B, int beginRow, int endRow) {
+    const size_t m1Cols = A->numCols,
+                 resultRows = C->numRows,
+                 m2Cols = B->numCols;
 
-	const uint size = boost::lexical_cast<uint>(argv[1]);
+    for (size_t k = 0; k < m1Cols; ++k) {
+        for (size_t i = 0; i < resultRows; ++i) {
+            int row = i + beginRow;
+            double r = IDX(A, row, k);
+            for (size_t j = 0; k < m2Cols; ++j) {
+                IDX(C, i, j) += r * IDX(B, k, j);
+            }
+        }
+    }
+}
 
-	Matrix A(Size(size, size));
-	Matrix B(Size(size, size));
+// void naive(Matrix *C, const Matrix *A, const Matrix *B, int row0, int rowMax) {
+//     for (int i = 0; i < C->numRows; ++i) {
+//         int row = i + row0;
+//         for (int col = 0; col < B->numCols; ++col)
+//             for (int j = 0; j < A->numCols; ++j)
+//                 IDX(C, i, col) += IDX(A, row, j) * IDX(B, j, col);
+//     }
+// }
 
-	// Generate some random test data
-	generate_random_vector(A);
-	generate_random_vector(B);
+// void notSoNaive(Matrix *C, const Matrix *A, const Matrix *B, int row0, int rowMax) {
+//     for (int k = 0; k < A->numCols; k++) {
+//         for (int i = 0; i < C->numRows; i++) {
+//             int y = i + row0;
+//             double r = IDX(A, y, k);
+//             for (int j = 0; j < B->numCols; j++)
+//                 IDX(C, i, j) += r * IDX(B, k, j);
+//         }
+//     }
+// }
 
-	// Time the multiplication for sequential
-	std::chrono::time_point<std::chrono::system_clock> start_time, end_time;
-	start_time = std::chrono::system_clock::now();
+Matrix *doWork(const Matrix *A, const Matrix *B, int myRank, int numRanks) {
+    // Number of C rows for which this rank is responsible.
+    int numRowsResponsible = A->numRows / numRanks;
+    int row0 = myRank * numRowsResponsible;
+    int rowMax = std::min((myRank+1) * numRowsResponsible, A->numRows);
 
-	Matrix C = A*B;
+    Matrix *myC = malloc(sizeof(Matrix));
+    myC->numRows = rowMax - row0;
+    myC->numCols = B->numCols;
+    myC->M = calloc(myC->numRows * myC->numCols, sizeof(double));
 
-	end_time = std::chrono::system_clock::now();
-	double diff = std::chrono::duration_cast<std::chrono::duration<double,std::ratio<1>>>(end_time - start_time).count();
+    // Multiply the matrices.
+    printf("numRows: %d \t numCols: %d\n", myC->numRows, myC->numCols);
+    naive(myC, A, B, row0, rowMax);
 
-	std::cout << "It took " << diff << " seconds to do the multiplication." << std::endl;
+    return myC;
+}
 
-	return 0;
+void collect(Matrix *myC, int myRank, int productSize) {
+    Matrix *C;
+    if (myRank == 0) {
+        C = malloc(sizeof(Matrix));
+        C->M = malloc(productSize * sizeof(double));
+        C->numCols = myC->numCols;
+        C->numRows = productSize / myC->numCols;
+    }
+
+    // TODO: Might want to use a gatherv instead.
+    MPI_Gather(myC->M, myC->numRows * myC->numCols, MPI_DOUBLE, C->M, myC->numRows * myC->numCols, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+
+    printf("%f\n", C[0]);
+    /* if (myRank == 0) cleanup(C); */
+}
+
+Matrix *randMatrix(int numRows, int numCols) {
+    Matrix *r = malloc(sizeof(Matrix));
+    r->numRows = numRows; r->numCols = numCols;
+    r->M = malloc(numRows * numCols * sizeof(double));
+
+    for (int n = 0; n < numRows*numCols; ++n)
+        r->M[n] = ((double) rand())/RAND_MAX;
+
+    return r;
+}
+
+void cleanup(Matrix * A) { 
+    delete(A->M);
+    delete(A);
+}
+
+int main(int argc, char *argv[]) {
+    int numRanks, myRank;
+
+    MPI_Init(&argc, &argv);
+    MPI_Comm_rank(MPI_COMM_WORLD, &myRank);
+    MPI_Comm_size(MPI_COMM_WORLD, &numRanks);
+
+    // Create random matrices.
+    Matrix *A = randMatrix(atoi(argv[1]), atoi(argv[2]));
+    Matrix *B = randMatrix(atoi(argv[2]), atoi(argv[3]));
+
+    // Delegate work.
+    Matrix *myC = doWork(A, B, myRank, numRanks);
+
+    // Collect & merge results.
+    collect(myC, myRank, A->numRows * B->numCols);
+
+    cleanup(A);
+    cleanup(B);
+    cleanup(myC);
+    MPI_Finalize();
+
+    return 0;
 }

@@ -1,9 +1,9 @@
-LIB_PATH = /usr/lib
-LIBS = -lboost_system -lboost_mpi -lboost_serialization
-CC = mpic++ 
-CFLAGS = -std=c++11 -Wall -Ofast -march=native \
+CC = mpicc
+OBJS = mat_mult.o
+EXEC = mm
+CFLAGS = -std=c99 \
+-Wall -Ofast -march=native \
 -pedantic \
--Werror \
 -m64 \
 -msse4.2 \
 -mfpmath=sse \
@@ -22,21 +22,12 @@ CFLAGS = -std=c++11 -Wall -Ofast -march=native \
 -ftree-loop-distribution \
 -ftree-vectorize \
 --param omega-hash-table-size=10031 \
-$(LINK)
-LINK = -L $(LIB_PATH)
-OBJS = matrix.o matrix_multiply.o matrix_multiply_parallel.o
-EXEC = mm
+
 
 all: $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -o $(EXEC)
+	$(CC) $(CFLAGS) $^ -o $(EXEC)
 
-matrix: matrix.o matrix_multiply.o
-	$(CC) $(CFLAGS) $^ $(LIBS) -o $(EXEC)
-
-parallel: matrix_multiply_parallel.o matrix.o
-	$(CC) $(CFLAGS) $^ $(LIBS) -o $(EXEC)
-
-%.o: %.cpp
+%.o: %.c
 	$(CC) $(CFLAGS) $< -c
 
 clean:
