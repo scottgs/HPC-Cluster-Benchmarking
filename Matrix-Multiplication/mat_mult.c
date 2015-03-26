@@ -2,10 +2,14 @@
 #include <stdio.h>
 #include <mpi.h>
 #include <time.h> // for srand and timing the program
+#include <papi.h>
 
 #define MIN(x, y) ( (x < y) ? x : y )
-#define LIN(x, y, dimX) ( x + (y * dimX) )
-#define DATA_VALUE(A, row, col) ( A->data[LIN(col, row, A->numCols)] )
+#define IDX_INTO_ARRAY(x, y, dimX) ( x + (y * dimX) ) // since using matrix data as 1D array
+#define DATA_VALUE(A, row, col) ( A->data[IDX_INTO_ARRAY(col, row, A->numCols)] )
+
+#define NUM_EVENTS 1
+#define ERROR_RETURN(errorCode) { fprintf(stderr, "Error %d %s:line %d: \n", errorCode,__FILE__,__LINE__);  exit(errorCode); }
 
 // #define _DEBUG
 
@@ -79,10 +83,6 @@ void collect(Matrix * partialResult, int procRank, int productSize) {
     MPI_Gather(partialResult->data, numElements, MPI_DOUBLE,
                finalResult->data, numElements, MPI_DOUBLE,
                0, MPI_COMM_WORLD);
-
-    #ifdef _DEBUG
-        printf("%f\n", finalResult[0]);
-    #endif
 }
 
 Matrix* generate_rand_matrix(int numRows, int numCols) {
@@ -103,6 +103,45 @@ Matrix* generate_rand_matrix(int numRows, int numCols) {
 }
 
 int main(int argc, char *argv[]) {
+    // int retVal;
+
+    // Must be initialized to PAPI_NULL before calling PAPI_create_event
+    // int eventSet = PAPI_NULL;
+
+    // char errString[PAPI_MAX_STR_LEN];
+    // long long values[NUM_EVENTS];
+
+    /****************************************************************************
+    * This part initializes the library and compares the version number of the  *
+    * header file, to the version of the library. If if these don't match, then *
+    * it is likely that PAPI won't work correctly. If there is an error, retval *
+    * keeps track of the version number.                                        *
+    ****************************************************************************/
+  
+    // if( (retVal = PAPI_library_init(PAPI_VER_CURRENT)) != PAPI_VER_CURRENT ) {
+    //     fprintf(stderr, "Error: %s\n", errString);
+    //     exit(EXIT_FAILURE);
+    // }
+
+    // // Creating event set
+    // if ( (retVal = PAPI_create_eventset(&eventSet)) != PAPI_OK) {
+    //     ERROR_RETURN(retVal);
+    // }
+
+    // // Add the array of events PAPI_TOT_INS and PAPI_TOT_CYC to the eventSet
+    // if ( (retVal = PAPI_add_event(eventSet, PAPI_L1_DCM)) != PAPI_OK ) {
+    //     ERROR_RETURN(retVal);
+    // }
+
+    // // Start counting
+    // if ( (retVal = PAPI_start(eventSet)) != PAPI_OK ) {
+    //     ERROR_RETURN(retVal);
+    // }
+
+
+    /****************************************************************************
+    *           Start the MPI variable declaration and matrix multiplication
+    * ***************************************************************************/
     int processRank, numProcs;
     clock_t start_time, end_time;
     start_time = clock();
@@ -142,6 +181,27 @@ int main(int argc, char *argv[]) {
         }
         cleanup(testMatrix);
     #endif
+
+    // /* Stop counting, this reads from the counter as well as stop it. */
+    // if ( (retVal=PAPI_stop(eventSet,values)) != PAPI_OK) {
+    //     ERROR_RETURN(retVal);
+    // }
+
+    // const unsigned long totalOps = A->numRows * B->numCols * B->numCols + A->numRows + B->numCols;
+    // const double missRatio = values[0] / totalOps;
+    // printf("Miss ratio is %f\n", missRatio);
+
+    // if ( (retVal=PAPI_remove_event(eventSet,PAPI_L1_DCM)) !=PAPI_OK ) {
+    //     ERROR_RETURN(retVal);
+    // }
+
+    // // Free all PAPI memory and data structures, Event set must be empty.
+    // if ( (retVal=PAPI_destroy_eventset(&eventSet)) != PAPI_OK ) {
+    //     ERROR_RETURN(retVal);
+    // }
+
+    // Free the resources used by PAPI
+    // PAPI_shutdown();
 
     // Free up the memory associated with the matrices.
     cleanup(A);

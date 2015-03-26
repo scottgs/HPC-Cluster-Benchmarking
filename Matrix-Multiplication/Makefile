@@ -23,12 +23,13 @@ CFLAGS = -std=c99 \
 -ftree-vectorize \
 --param omega-hash-table-size=10031 \
 
+PAPI_LINK=-lpapi
 
 all: $(OBJS)
-	$(CC) $(CFLAGS) $^ -o $(EXEC)
+	$(CC) $(CFLAGS) $^ $(PAPI_LINK) -o $(EXEC)
 
 %.o: %.c
-	$(CC) $(CFLAGS) $< -c
+	$(CC) $(CFLAGS) $< $(PAPI_LINK) -c
 
 clean:
 	rm *.o $(EXEC)
