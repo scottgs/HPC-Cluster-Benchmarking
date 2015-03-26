@@ -38,7 +38,7 @@ void matrix_multiply(Matrix * partialResult, const Matrix * m1, const Matrix * m
     for (unsigned int k = 0; k < m1Rows; ++k) {
         for (unsigned int i = 0; i < partialRows; ++i) {
             const int rowOffsetted = i + beginRow;
-            double r = DATA_VALUE(m1, rowOffsetted, k);
+            const double r = DATA_VALUE(m1, rowOffsetted, k);
             for (unsigned int j = 0; j < m2Cols; ++j) {
                 DATA_VALUE(partialResult, i, j) += r * DATA_VALUE(m2, k, j);
             }
@@ -48,8 +48,7 @@ void matrix_multiply(Matrix * partialResult, const Matrix * m1, const Matrix * m
 
 Matrix * matrixMultiplyHelper(const Matrix * A, const Matrix * B, int procRank, int numProcs) {
     // Split up the work (i.e. number of rows) for each process
-    int work = A->numRows / numProcs;
-
+    const int work = A->numRows / numProcs;
     const int beginRow = procRank * work;
     const int endRow = MIN( (procRank+1) * work, A->numRows );
 
@@ -76,7 +75,7 @@ void collect(Matrix * partialResult, int procRank, int productSize) {
         finalResult->numRows = productSize / partialResult->numCols;
     }
 
-    int numElements = partialResult->numRows * partialResult->numCols;
+    const int numElements = partialResult->numRows * partialResult->numCols;
     MPI_Gather(partialResult->data, numElements, MPI_DOUBLE,
                finalResult->data, numElements, MPI_DOUBLE,
                0, MPI_COMM_WORLD);
@@ -122,7 +121,7 @@ int main(int argc, char *argv[]) {
     Matrix * portion = matrixMultiplyHelper(A, B, processRank, numProcs);
 
     // Collect and merge results.
-    int productSize = A->numRows * B->numCols;
+    const int productSize = A->numRows * B->numCols;
     collect(portion, processRank, productSize);
 
     #ifdef _DEBUG
@@ -153,7 +152,7 @@ int main(int argc, char *argv[]) {
     MPI_Finalize();
 
     end_time = clock();
-    double elapsed_time = (double)(end_time - start_time) / CLOCKS_PER_SEC;
+    const double elapsed_time = (double)(end_time - start_time) / CLOCKS_PER_SEC;
     printf("To do the MPI Matrix multiplication for this process took %lf seconds.\n", elapsed_time);
 
     return EXIT_SUCCESS;
