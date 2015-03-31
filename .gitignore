@@ -1,3 +1,10 @@
+/.settings/
+config.h
+
+/bin/
+/build/
+/Debug/
+/plots
+/results/
+/resources/
 *.o
-*.gch
-*.pdf
