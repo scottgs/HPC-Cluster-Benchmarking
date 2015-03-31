@@ -7,7 +7,7 @@ A Bitonic List is defined as a list with no more than one *local maximum* and no
 
 Binary-Split: divides the list equally into two lists by comparing/exchanging each item on the first half with the corresponding item in the second half of the list.
 
-Example: 					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 24  10  15  9  4  2  5  8 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 10  11  12  13  22  30  32  45
+Example: 					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 24  10  15  9  4  2  5  8 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 10  11  12  13  22  30  32  45
 
 Result after Binary-Split:  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 10  11  12  9  4  2  5  8 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 24  20  15  13  22  30  32  45
 
