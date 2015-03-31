@@ -33,7 +33,10 @@ void naiveMatrixMultiply(Matrix * C, const Matrix * A, const Matrix * B) {
     }
 }
 
-void matrix_multiply(Matrix * partialResult, const Matrix * m1, const Matrix * m2, int beginRow, int endRow) {
+/**
+ * TODO: Tiling, HPC improvements, run in blocks or strides
+ */
+void matrixMultiply(Matrix * partialResult, const Matrix * m1, const Matrix * m2, int beginRow, int endRow) {
     const unsigned int m1Rows = m1->numRows,
                        m2Cols = m2->numCols,
                        partialRows = partialResult->numRows;
@@ -54,6 +57,13 @@ Matrix * matrixMultiplyHelper(const Matrix * A, const Matrix * B, int procRank, 
     papiEvents * events;
     events = startEvents();
 
+     /* Discussion on splitting work when it's not an even split between # of processors: 
+     * http://stackoverflow.com/questions/9269399/sending-blocks-of-2d-array-in-c-using-mpi?rq=1
+     * 
+     * If need to send different numbers of items to each process? Then you need a generalized version of scatter, MPI_Scatterv().
+     * - lets you specify the counts for each processor, and displacements -- where in the global array that piece of data starts.
+     */
+    
     // Split up the work (i.e. number of rows) for each process
     const int work = A->numRows / numProcs;
     const int beginRow = procRank * work;
@@ -66,7 +76,7 @@ Matrix * matrixMultiplyHelper(const Matrix * A, const Matrix * B, int procRank, 
     portion->numCols = B->numCols;
     portion->data = calloc(portion->numRows * portion->numCols, sizeof(double));
 
-    matrix_multiply(portion, A, B, portion->numRows, portion->numCols);
+    matrixMultiply(portion, A, B, portion->numRows, portion->numCols);
 
     stopEvents(events);
     //print summary for non-master
@@ -109,6 +119,8 @@ Matrix* generate_rand_matrix(int numRows, int numCols) {
     return mat;
 }
 
+// TODO: use CSV file and write relative timing statistics to file
+// TODO: generate script to constantly run this program on larger and larger input sizes
 int main(int argc, char *argv[]) {
     int processRank, numProcs;
     clock_t start_time, end_time;

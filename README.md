@@ -19,4 +19,6 @@ The source contains the following work:
 
 ## Building (CLI) ##
 * build libraries in dependencies folder (./clean.sh, ./papi.sh)
-* TO-DO: create a bash script to execute the Makefiles and test scripts for each algorithm in the src/ folder. Alternative, may use config file and let others pick and choose which algorithms to benchmark.
+
+## TO-DO ##
+* Create a bash script to execute the Makefiles and test scripts for each algorithm in the src/ folder. Alternative, may use config file and let others pick and choose which algorithms to benchmark.
