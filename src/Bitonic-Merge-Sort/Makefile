@@ -28,9 +28,9 @@ CFLAGS = -std=c++1y \
 -ftree-loop-if-convert \
 -ftree-loop-if-convert-stores \
 -ftree-loop-distribution \
--ftree-vectorize
+-ftree-vectorize 
 
-LIB = -lpapi
+LIB = -lpapi 
 INC = -I include
 
 $(TARGET): $(OBJS)
