@@ -9,16 +9,17 @@ To run the shell script, execute the following command: ./papi.sh
 For instructions on how to install MPI and set your PATH and LD_LIBRARY_PATH variables, check out [this](http://www.itp.phys.ethz.ch/education/hs12/programming_techniques/openmpi.pdf).
 
 ## How to compile and run MPI programs ##
-To compile your MPI C++ programs you have to use mpicxx with the same arguments as you would for g++. To run an MPI program called PROGRAM_NAME with N MPI processes, you would use the following command: mpirun -np N PROGRAM_NAME.
+To compile your MPI C++ programs you have to use mpicxx with the same arguments as you would for g++. To run a program with N MPI processes, you would use the following command: mpirun -np N /path/to/binary/of/program program_arguments_go_here.
 
 ## Code ##
 The source contains the following work:
 
 * Parallel Matrix Multiplication using MPI (C)
-* Bitonic Sort using Boost MPI (C++) -- in progress
+* Bitonic Sort using MPI (C++) -- in progress
 
 ## Building (CLI) ##
-* build libraries in dependencies folder (./clean.sh, ./papi.sh)
+* Build libraries in dependencies folder (./clean.sh, ./papi.sh)
+* Run the Makefiles for the respective algorithms you wish to benchmark with and then run the respective program(s).
 
 ## TO-DO ##
 * Create a bash script to execute the Makefiles and test scripts for each algorithm in the src/ folder. Alternative, may use config file and let others pick and choose which algorithms to benchmark.
