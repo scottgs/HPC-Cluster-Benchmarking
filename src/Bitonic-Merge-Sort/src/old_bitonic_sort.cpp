@@ -82,26 +82,20 @@ void sendMaxReceiveMin(vector<SortType> & vec, const int otherRank) {
 				receiveCompare = -1; // just init to this--will get updated
 
 	/* MPI_Sendrec can be thought as an MPI_Isend, MPI_Irecv, and a pair of MPI_Waits. */
-	try {
-		MPI_Sendrecv(
-			&tempCompare,				// Init address of send buffer
-			sizeof(CompareType),		// Number of elements in send buffer
-			MPI_BYTE,					// Type of elements in send buffer
-			otherRank,					// Destination process
-			MIN_TAG,					// Send tag
-			&receiveCompare,			// Init address of receive buffer
-			sizeof(CompareType),		// Number of elements in receive buffer
-			MPI_BYTE,					// Type of elements in receive buffer
-			otherRank,					// Source process
-			MAX_TAG,					// Receive tag
-			MPI_COMM_WORLD,				// Communicator
-			MPI_STATUS_IGNORE			// MPI Status
-		);
-	}
-	catch (MPI::Exception & e) {
-		cout << "MPI Error: " << e.Get_error_string() << e.Get_error_code();
-		MPI::COMM_WORLD.Abort(-1);
-	}
+	MPI_Sendrecv(
+		&tempCompare,				// Init address of send buffer
+		sizeof(CompareType),		// Number of elements in send buffer
+		MPI_BYTE,					// Type of elements in send buffer
+		otherRank,					// Destination process
+		MIN_TAG,					// Send tag
+		&receiveCompare,			// Init address of receive buffer
+		sizeof(CompareType),		// Number of elements in receive buffer
+		MPI_BYTE,					// Type of elements in receive buffer
+		otherRank,					// Source process
+		MAX_TAG,					// Receive tag
+		MPI_COMM_WORLD,				// Communicator
+		MPI_STATUS_IGNORE			// MPI Status
+	);
 
 	while (pivot != left && pivot != right && vec[pivot] != receiveCompare) {
 		/* Compare the pivot value to the incoming one. */
@@ -186,98 +180,72 @@ void sendMinReceiveMax(vector<SortType> & vec, const int otherRank) {
 				receiveCompare = -1; // just init to this--will get updated
 
 	/* MPI_Sendrec can be thought as an MPI_Isend, MPI_Irecv, and a pair of MPI_Waits. */
-	// try {
-	// 	MPI_Sendrecv(
-	// 		&tempCompare,				// Init address of send buffer
-	// 		sizeof(CompareType),		// Number of elements in send buffer
-	// 		MPI_BYTE,					// Type of elements in send buffer
-	// 		otherRank,					// Destination process
-	// 		MAX_TAG,					// Send tag
-	// 		&receiveCompare,			// Init address of receive buffer
-	// 		sizeof(CompareType),		// Number of elements in receive buffer
-	// 		MPI_BYTE,					// Type of elements in receive buffer
-	// 		otherRank,					// Source process
-	// 		MIN_TAG,					// Receive tag
-	// 		MPI_COMM_WORLD,				// Communicator
-	// 		MPI_STATUS_IGNORE			// MPI Status
-	// 	);
-	// }
-	// catch (MPI::Exception & e) {
-	// 	cout << "MPI Error: " << e.Get_error_string() << e.Get_error_code();
-	// 	MPI::COMM_WORLD.Abort(-1);
-	// }
+	MPI_Sendrecv(
+		&tempCompare,				// Init address of send buffer
+		sizeof(CompareType),		// Number of elements in send buffer
+		MPI_BYTE,					// Type of elements in send buffer
+		otherRank,					// Destination process
+		MAX_TAG,					// Send tag
+		&receiveCompare,			// Init address of receive buffer
+		sizeof(CompareType),		// Number of elements in receive buffer
+		MPI_BYTE,					// Type of elements in receive buffer
+		otherRank,					// Source process
+		MIN_TAG,					// Receive tag
+		MPI_COMM_WORLD,				// Communicator
+		MPI_STATUS_IGNORE			// MPI Status
+	);
 
-	// while (pivot != left && vec[pivot] != receiveCompare) {
-	// 	if (vec[pivot] < receiveCompare)
-	// 		left = pivot;
-	// 	else
-	// 		right = pivot;
+	while (pivot != left && vec[pivot] != receiveCompare) {
+		if (vec[pivot] < receiveCompare)
+			left = pivot;
+		else
+			right = pivot;
 		
-	// 	pivot = getPivotIndex<SortType>(left, right);
-	// 	tempCompare = CompareType(vec[pivot]);
+		pivot = getPivotIndex<SortType>(left, right);
+		tempCompare = CompareType(vec[pivot]);
 
-	// 	try {
-	// 		MPI_Sendrecv(
-	// 			&tempCompare,				// Init address of send buffer
-	// 			sizeof(CompareType),		// Number of elements in send buffer
-	// 			MPI_BYTE,					// Type of elements in send buffer
-	// 			otherRank,					// Destination process
-	// 			MAX_TAG,					// Send tag
-	// 			&receiveCompare,			// Init address of receive buffer
-	// 			sizeof(CompareType),		// Number of elements in receive buffer
-	// 			MPI_BYTE,					// Type of elements in receive buffer
-	// 			otherRank,					// Source process
-	// 			MIN_TAG,					// Receive tag
-	// 			MPI_COMM_WORLD,				// Communicator
-	// 			MPI_STATUS_IGNORE			// MPI Status
-	// 		);
-	// 	}
-	// 	catch (MPI::Exception & e) {
-	// 		cout << "MPI Error: " << e.Get_error_string() << e.Get_error_code();
-	// 		MPI::COMM_WORLD.Abort(-1);
-	// 	}
-	// }
+		MPI_Sendrecv(
+			&tempCompare,				// Init address of send buffer
+			sizeof(CompareType),		// Number of elements in send buffer
+			MPI_BYTE,					// Type of elements in send buffer
+			otherRank,					// Destination process
+			MAX_TAG,					// Send tag
+			&receiveCompare,			// Init address of receive buffer
+			sizeof(CompareType),		// Number of elements in receive buffer
+			MPI_BYTE,					// Type of elements in receive buffer
+			otherRank,					// Source process
+			MIN_TAG,					// Receive tag
+			MPI_COMM_WORLD,				// Communicator
+			MPI_STATUS_IGNORE			// MPI Status
+		);
+	}
 
-	// if (vec[pivot] <= receiveCompare) {
-	// 	try {
-	// 		MPI_Sendrecv_replace(
-	// 			&vec[0], 							// Init address of send AND receive buffers
-	// 			(pivot + 1) * sizeof(SortType),		// Number of elements in send AND receive buffers
-	// 			MPI_BYTE,							// Send datatype
- //            	otherRank, 							// Destination process
- //            	MAX_MESSAGE_TAG,					// Send Tag
- //            	otherRank,							// Source process
- //            	MIN_MESSAGE_TAG,					// Receive Tag
- //            	MPI_COMM_WORLD,						// Communicator
- //            	MPI_STATUS_IGNORE					// Status
- //            );
-	// 	}
-	// 	catch (MPI::Exception & e) {
-	// 		cout << "MPI Error: " << e.Get_error_string() << e.Get_error_code();
-	// 		MPI::COMM_WORLD.Abort(-1);
-	// 	}
-	// }
-	// else {
-	// 	if (pivot != 0) {
-	// 		try {
-	// 			MPI_Sendrecv_replace(
-	// 				&vec[0], 						// Init address of send AND receive buffers
-	// 				pivot * sizeof(SortType),		// Number of elements in send AND receive buffers
-	// 				MPI_BYTE,						// Send datatype
-	//             	otherRank, 						// Destination process
-	//             	MAX_MESSAGE_TAG,				// Send Tag
-	//             	otherRank,						// Source process
-	//             	MIN_MESSAGE_TAG,				// Receive Tag
-	//             	MPI_COMM_WORLD,					// Communicator
-	//             	MPI_STATUS_IGNORE				// Status
-	//             );
-	// 		}
-	// 		catch (MPI::Exception & e) {
-	// 			cout << "MPI Error: " << e.Get_error_string() << e.Get_error_code();
-	// 			MPI::COMM_WORLD.Abort(-1);
-	// 		}
-	// 	}
-	// }
+	if (vec[pivot] <= receiveCompare) {
+		MPI_Sendrecv_replace(
+				&vec[0], 							// Init address of send AND receive buffers
+				(pivot + 1) * sizeof(SortType),		// Number of elements in send AND receive buffers
+				MPI_BYTE,							// Send datatype
+            	otherRank, 							// Destination process
+            	MAX_MESSAGE_TAG,					// Send Tag
+            	otherRank,							// Source process
+            	MIN_MESSAGE_TAG,					// Receive Tag
+            	MPI_COMM_WORLD,						// Communicator
+            	MPI_STATUS_IGNORE					// Status
+		);
+	} 
+	else if (pivot != 0) {
+		MPI_Sendrecv_replace(
+			&vec[0], 						// Init address of send AND receive buffers
+			pivot * sizeof(SortType),		// Number of elements in send AND receive buffers
+			MPI_BYTE,						// Send datatype
+        	otherRank, 						// Destination process
+        	MAX_MESSAGE_TAG,				// Send Tag
+        	otherRank,						// Source process
+        	MIN_MESSAGE_TAG,				// Receive Tag
+        	MPI_COMM_WORLD,					// Communicator
+        	MPI_STATUS_IGNORE				// Status
+        );
+	}
 }
 
 // Reference: http://web.mst.edu/~ercal/387/P3/pr-proj-3.pdf
@@ -363,82 +331,70 @@ int main(int argc, char ** argv) {
 	// 	printList(nums);
 	// #endif	
 
-	// bool isSorted = is_sorted(nums.begin(), nums.end());
-	// bool locallySorted = false;
+	bool isSorted = is_sorted(nums.begin(), nums.end());
+	bool locallySorted = false;
 
-	// /* Perform a logical AND across the elements. */
-	// try {
-	// 	MPI_Reduce(
-	// 		&isSorted,			// Send buffer
-	// 		&locallySorted,		// Receive buffer
-	// 		1,					// Number of elements in send buffer
-	// 		MPI_INT,			// MPI_Datatype for send buffer, i.e. what is in our list to srt
-	// 		MPI_LAND,			// MPI_Op, i.e. reduce operation. Logical AND operator here.
-	// 		MASTER_NODE,		// Root process
-	// 		MPI_COMM_WORLD 		// Communicator
-	// 	);
-	// }
-	// catch (MPI::Exception & e) {
-	// 	cout << "MPI Error: " << e.Get_error_string() << e.Get_error_code();
-	// 	MPI::COMM_WORLD.Abort(-1);
-	// }
+	/* Perform a logical AND across the elements. */
+	MPI_Reduce(
+		&isSorted,			// Send buffer
+		&locallySorted,		// Receive buffer
+		1,					// Number of elements in send buffer
+		MPI_INT,			// MPI_Datatype for send buffer, i.e. what is in our list to srt
+		MPI_LAND,			// MPI_Op, i.e. reduce operation. Logical AND operator here.
+		MASTER_NODE,		// Root process
+		MPI_COMM_WORLD 		// Communicator
+	);
 
 
-	// int * const extremum = new int[2 * numProcs];
-	// int extrem[2];
-	// extrem[0] = nums[0];
-	// extrem[1] = nums[listSize-1];
+	int * const extremum = new int[2 * numProcs];
+	int extrem[2];
+	extrem[0] = nums[0];
+	extrem[1] = nums[listSize-1];
 
-	// /*
-	//  * Each process (root process included) sends the contents of its send buffer to the root process. 
-	//  * The root process receives the messages and stores them in rank order. 
-	//  * The outcome is as if each of the n processes in the group (including the root process) had executed a call to
-	//  * MPI_Send and MPI_Recv.
-	//  */
-	// try {
-	// 	MPI_Gather(
-	// 		extrem,				// Starting address of send buffer
-	// 		2,					// Number of elements in send buffer
-	// 		MPI_INT,			// Datatype of send buffer
-	// 		extremum,			// Address of receive buffer
-	// 		2,					// Number of elements for any single receive
-	// 		MPI_INT,			// Datatype of receive buffer elements
-	// 		MASTER_NODE,		// Rank of receiving process
-	// 		MPI_COMM_WORLD 		// Communicator
-	// 	);
-	// }
-	// catch (MPI::Exception & e) {
-	// 	cout << "MPI Error: " << e.Get_error_string() << e.Get_error_code();
-	// 	MPI::COMM_WORLD.Abort(-1);
-	// }
+	/*
+	 * Each process (root process included) sends the contents of its send buffer to the root process. 
+	 * The root process receives the messages and stores them in rank order. 
+	 * The outcome is as if each of the n processes in the group (including the root process) had executed a call to
+	 * MPI_Send and MPI_Recv.
+	 */
+	MPI_Gather(
+		extrem,				// Starting address of send buffer
+		2,					// Number of elements in send buffer
+		MPI_INT,			// Datatype of send buffer
+		extremum,			// Address of receive buffer
+		2,					// Number of elements for any single receive
+		MPI_INT,			// Datatype of receive buffer elements
+		MASTER_NODE,		// Rank of receiving process
+		MPI_COMM_WORLD 		// Communicator
+	);
 	
-	// #ifdef _DEBUG
-	// 	if (isSorted)
-	// 		cout << "Is sorted!\n" << endl;
-	// 	else
-	// 		cout << "NO, it is not sorted!\n" << endl;
-	// #endif
+	#ifdef _DEBUG
+		if (isSorted)
+			cout << "Is sorted!\n" << endl;
+		else
+			cout << "NO, it is not sorted!\n" << endl;
+	#endif
 
-	// if (procRank == MASTER_NODE) {
-	// 	if (locallySorted)
-	// 		cout << "Locally sorted!\n" << endl;
-	// 	else 
-	// 		cout << "NO, not locally sorted!\n" << endl;
+	if (procRank == MASTER_NODE) {
+		if (locallySorted)
+			cout << "Locally sorted!\n" << endl;
+		else 
+			cout << "NO, not locally sorted!\n" << endl;
 	
-	// 	bool extremumCheck = false;
-	// 	for (int procIndex = 1; procIndex < numProcs && extremumCheck; ++procIndex) {
-	// 		if (extremum[2 * (procIndex - 1) + 1] > extremum[2 * procIndex])
-	// 			extremumCheck = false;
-	// 	}
+		bool extremumCheck = false;
+		for (int procIndex = 1; procIndex < numProcs && extremumCheck; ++procIndex) {
+			if (extremum[2 * (procIndex - 1) + 1] > extremum[2 * procIndex])
+				extremumCheck = false;
+		}
 
-	// 	if (extremumCheck)
-	// 		cout << "No problems with the extremum.\n" << endl;
-	// 	else
-	// 		cout << "Problem with the extremum.\n" << endl;
-	// }
+		if (extremumCheck)
+			cout << "No problems with the extremum.\n" << endl;
+		else
+			cout << "Problem with the extremum.\n" << endl;
+	}
 
 	// Free up my resources used
-	// delete[] extremum;
+	delete[] extremum;
 
 	// Shutdown MPI and release those resources
 	MPI_Finalize();
