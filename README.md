@@ -11,7 +11,7 @@ For instructions on how to install MPI and set your PATH and LD_LIBRARY_PATH var
 To compile your MPI C++ programs you have to use mpicxx with the same arguments as you would for g++. To run a program with N MPI processes, you would use the following command: 
 
 ```
-mpirun -np <executable> [program arguments]
+mpirun -np <number of processors you wish to use> <executable> [program arguments]
 ```
 
 ## Code ##
@@ -25,11 +25,6 @@ The source contains the following work in which I have used PAPI to track variou
 ## Examples ##
 Since the documentation regarding PAPI usage is not great, I have compiled some *simple* standalone examples for getting introduced to PAPI. For lengthier uses and actual use in source code, check out the src folder. 
 
-## Building (CLI) ##
-* Install the dependencies mentioned above using the shell scripts located in the tools folder.
-* Run the Makefiles for the respective algorithms you wish to benchmark with and then run the respective program(s).
-
-## Example Usage ##
 ```
 	#include "papi_wrapper.h"
 
@@ -59,8 +54,6 @@ Since the documentation regarding PAPI usage is not great, I have compiled some 
     // Shutdown PAPI environment.
     shutdownPapi();
 ```
-
-* Some sample usage can be found in the simple examples folder as well.
 
 ## TO-DO ##
 * Create a bash script to execute the Makefiles and test scripts for each algorithm in the src/ folder. Alternative, may use config file and let others pick and choose which algorithms to benchmark.
