@@ -2,8 +2,7 @@
 Developing high performance, parallel and distributed algorithms for benchmarking a supercomputer (cluster with 27 nodes and growing) using the [PAPI High Performance Computing Framework](http://icl.cs.utk.edu/papi/overview/). This will serve as examples of programs I use to benchmark the supercomputer and experiment with different distributed computing paradigms. Eventually this will turn into a small library for testing clusters with HPC algorithms using these different paradigms and libraries.
 
 ## Dependencies ##
-The major dependencies include PAPI and MPI.  For your ease, simply run the PAPI shell script located in the parent directory to download PAPI. 
-To run the shell script, execute the following command: ./papi.sh
+The major dependencies include PAPI, Boost and MPI.  For your ease, simply run the shell scripts located in the tools folder to install the needed dependencies.
 
 ## Installing MPI ##
 For instructions on how to install MPI and set your PATH and LD_LIBRARY_PATH variables, check out [this](http://www.itp.phys.ethz.ch/education/hs12/programming_techniques/openmpi.pdf).
@@ -18,7 +17,7 @@ The source contains the following work:
 * Bitonic Sort using MPI (C++) -- Simple one works fine, more complicated MPI still has some bugs
 
 ## Building (CLI) ##
-* Build libraries in dependencies folder (./clean.sh, ./papi.sh)
+* Install the dependencies mentioned above using the shell scripts located in the tools folder.
 * Run the Makefiles for the respective algorithms you wish to benchmark with and then run the respective program(s).
 
 ## TO-DO ##
