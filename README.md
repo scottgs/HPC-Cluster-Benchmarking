@@ -15,7 +15,7 @@ To compile your MPI C++ programs you have to use mpicxx with the same arguments 
 The source contains the following work:
 
 * Parallel Matrix Multiplication using MPI (C)
-* Bitonic Sort using MPI (C++) -- in progress
+* Bitonic Sort using MPI (C++) -- Simple one works fine, more complicated MPI still has some bugs
 
 ## Building (CLI) ##
 * Build libraries in dependencies folder (./clean.sh, ./papi.sh)
