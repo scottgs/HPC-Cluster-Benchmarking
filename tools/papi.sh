@@ -1,5 +1,7 @@
 #!/bin/zsh
 
+TOP_LEVEL=../
+
 CONTRIB=$PWD
 PACKAGE_VERSION=4.2.0
 PACKAGE_FILE=papi-${PACKAGE_VERSION}.tar.gz
@@ -11,7 +13,7 @@ PACKAGE_OPTS=( -j8 )
 
 echo @@@ Build papi
 set -e
-install -dv build download
+install -dv $TOP_LEVEL build download
 
 if [ ! -r download/${PACKAGE_FILE} ] ; then
   wget ${PACKAGE_URL} -P download
