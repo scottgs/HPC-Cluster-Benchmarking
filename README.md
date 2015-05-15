@@ -40,7 +40,7 @@ Since the documentation regarding PAPI usage is not great, I have compiled some 
 	    "PAPI_L2_DCH"   // L2 Data Cache Hits
         // Can add more events here...
     };
-    events = start_events(eventNames);
+    events = start_events(event_names);
     
     // Alternatively, you can just use the default event counters I choose and then use
     events = start_events();
