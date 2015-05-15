@@ -345,7 +345,6 @@
 // 		MPI_COMM_WORLD 		// Communicator
 // 	);
 
-
 // 	int * const extremum = new int[2 * numProcs];
 // 	int extrem[2];
 // 	extrem[0] = nums[0];

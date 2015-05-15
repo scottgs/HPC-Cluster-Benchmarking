@@ -1,7 +1,5 @@
 #include "papi_wrapper.h"
 
-// #define _DEBUG
-
 static int EVENTS[NUM_EVENTS] = {PAPI_TOT_CYC, PAPI_TOT_INS, PAPI_L1_DCM, PAPI_L2_DCA, PAPI_L2_DCH}; // PAPI_L2_DCM}, PAPI_L2_DCR, PAPI_L2_DCW};
 
 void initializePapi() {    

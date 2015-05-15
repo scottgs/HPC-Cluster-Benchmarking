@@ -8,16 +8,11 @@
 #include <mpi.h>
 #include <random>
 #include <stdexcept>
-
 #include <vector>
 
+#include <boost/lexical_cast.hpp>
+
 using std::vector;
-
-template< typename T >
-inline void generateListData(vector<T> & vec);
-
-template< typename T >
-inline void printList(const vector<T> & vec);
 
 template< typename SortType, typename CompareType >
 void bitonicSort(vector<SortType> & vec);
@@ -31,13 +26,25 @@ int partition(vector<SortType> & vec, int left, int right);
 template < typename SortType, typename CompareType >
 void qs(vector<SortType> & vec, const int left, const int right);
 
-template <class SortType, class CompareType>
-void sendMaxAndGetMin(vector<SortType> & vec, const int otherRank);
+template < class SortType, class CompareType >
+void sendMaxReceiveMin(vector<SortType> & vec, const int otherRank);
 
-template <class SortType, class CompareType>
-void sendMinAndGetMax(vector<SortType> & vec, const int otherRank);
+template < class SortType, class CompareType >
+void sendMinReceiveMax(vector<SortType> & vec, const int otherRank);
 
-template <typename SortType>
+template < typename T >
+T path_and_check(int argc, char ** argv);
+
+template< typename T >
+inline void generateListData(vector<T> & vec);
+
+template< typename T >
+inline void printList(const vector<T> & vec);
+
+template < class SortType >
+inline SortType getPivotIndex(const SortType left, const SortType right);
+
+template < typename SortType >
 inline void customSwap(SortType & x, SortType & y);
 
 #endif

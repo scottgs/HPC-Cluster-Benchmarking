@@ -13,7 +13,7 @@ typedef struct papiEvents {
   long long values[NUM_EVENTS];
 } papiEvents;
 
-//Ref: http://www.cs.utexas.edu/~pingali/CSE392/2011sp/hw2/
+// Ref: http://www.cs.utexas.edu/~pingali/CSE392/2011sp/hw2/
 #define ERROR_RETURN(returnVal) { fprintf(stderr, "Error %d %s:line %d: \n", returnVal,__FILE__,__LINE__);  exit(returnVal); }
 
 // Invoke from master process

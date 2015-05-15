@@ -1,7 +1,7 @@
-SUBDIRS = Simple_Cache_Analysis
+SUBDIRS = src examples
 
 all: subdirs
-	@echo "Building the examples."
+	@echo "Running Make for all of the subdirectories."
 
 subdirs:
 	@for dir in $(SUBDIRS); do \

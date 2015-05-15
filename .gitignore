@@ -1,7 +1,7 @@
 /.settings/
 config.h
 
-/bin/
+*/bin
 /build/
 /Debug/
 /plots

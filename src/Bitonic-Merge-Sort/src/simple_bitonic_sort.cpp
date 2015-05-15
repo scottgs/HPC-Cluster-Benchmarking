@@ -162,7 +162,7 @@ int main(int argc, char ** argv) {
 	/* Wait for all processes to finish bitonic sorting. */
   	MPI_Barrier(MPI_COMM_WORLD);
 
-  	/* Stop the clock. */
+  	/* Stop the clock. The time is marked BEFORE we call is_sorted for sanity check. */
   	if (procID == MASTER_NODE) {
   		wallClockEnd = MPI_Wtime();
   		auto diff = wallClockEnd - wallClockStart;

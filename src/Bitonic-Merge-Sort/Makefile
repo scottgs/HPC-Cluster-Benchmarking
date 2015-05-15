@@ -6,29 +6,44 @@ TARGET = bin/bitonicSort
 SRCEXT = cpp
 SOURCES = $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
 OBJS = $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
-CFLAGS = -std=c++1y \
--g \
--Wall \
--Ofast \
+
+CFLAGS = \
+-std=c++1y \
 -march=native \
--pedantic \
--m64 \
--msse4.2 \
--mfpmath=sse \
--flto \
--funsafe-loop-optimizations \
+-Ofast \
 -DNDEBUG \
+-mveclibabi=svml \
+-mfpmath=sse \
+-msse4.2 \
+-flto \
+-ftracer \
+-ffast-math \
+-fmerge-all-constants \
+-fno-signaling-nans \
+-fno-unsafe-math-optimizations \
+-fivopts \
+-fipa-matrix-reorg \
+-fvect-cost-model \
+-floop-flatten \
 -funroll-loops \
 -floop-strip-mine \
--ffast-math \
--fipa-matrix-reorg \
--floop-interchange \
 -floop-parallelize-all \
 -floop-block \
+-ftree-vectorize \
+-ftree-loop-optimize \
 -ftree-loop-if-convert \
 -ftree-loop-if-convert-stores \
 -ftree-loop-distribution \
--ftree-vectorize 
+-ftree-loop-distribute-patterns \
+-faggressive-loop-optimizations \
+-funsafe-loop-optimizations \
+-fvariable-expansion-in-unroller  \
+-fbranch-target-load-optimize \
+-m64 \
+-BOOST_CPPFLAGS \
+-BOOST_LDFLAGS \
+-D_DEBUG
+# -DNUMS_DEBUG
 
 LIB = -lpapi 
 INC = -I include
