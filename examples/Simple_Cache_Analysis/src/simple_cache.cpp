@@ -19,7 +19,7 @@ void do_some_work(const int n) {
 
 int main() {
     // Set up PAPI library environment
-    initializePapi();
+    initialize_papi();
 
 	papiEvents * events;
 	vector<string> eventNames = {
@@ -29,18 +29,18 @@ int main() {
 	    "PAPI_L2_DCH"   // L2 Data Cache Hits
         // Can add more events here...
     };
-    events = startEvents(eventNames);
+    events = start_events(eventNames);
 
     do_some_work(NUM_ITERATIONS);
 
     // Stop the events and remove them from the EventSet.
-    stopEvents(events);
+    stop_events(events, eventNames.size());
 
     std::cout << "Total cycles is: " << events->values[0] << std::endl;
     std::cout << events->values[3] << " L2 cache misses and " << events->values[1] << " loads.\n" << std::endl;
     
     // Shutdown PAPI environment.
-    shutdownPapi();
+    shutdown_papi();
 
 	return EXIT_SUCCESS;
 }

@@ -1,21 +1,24 @@
+# C++ Compiler
 CC = g++
+
+# Source, Build, BIN, Target directory paths
 SRCDIR = src
 BUILDDIR = build
-
 BINDIR = bin
-TARGET = bin/cache
+TARGET = bin/tests
 
 SRCEXT = cpp
+
+# Include all cpp files to use as sources and feed them to use as objects.
 SOURCES = $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
 OBJS = $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
 
-CFLAGS = \
--std=c++11 \
--march=native \
--Ofast 
+CFLAGS = -std=c++11 -march=native -Ofast
 
-LIBS = -l papi
-INC = -I ../../include
+# Normal libs to always include
+LIBS = -lpapi
+
+INC = -I ../include
 
 $(TARGET): $(OBJS)
 	@mkdir -p $(BINDIR)
@@ -29,4 +32,5 @@ clean:
 	$(RM) -r $(BUILDDIR) $(TARGET) && $(RM) -r $(BINDIR)
 
 .PHONY: clean
+
 

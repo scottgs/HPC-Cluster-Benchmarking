@@ -1,4 +1,4 @@
-SUBDIRS = src examples
+SUBDIRS = src examples tests
 
 all: subdirs
 	@echo "Running Make for all of the subdirectories."

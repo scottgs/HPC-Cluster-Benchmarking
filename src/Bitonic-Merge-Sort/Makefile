@@ -8,7 +8,7 @@ SOURCES = $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
 OBJS = $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
 
 CFLAGS = \
--std=c++1y \
+-std=c++11 \
 -march=native \
 -Ofast \
 -DNDEBUG \
@@ -43,7 +43,6 @@ CFLAGS = \
 -BOOST_CPPFLAGS \
 -BOOST_LDFLAGS \
 -D_DEBUG
-# -DNUMS_DEBUG
 
 LIB = -lpapi 
 INC = -I include
