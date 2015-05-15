@@ -31,7 +31,7 @@ Since the documentation regarding PAPI usage is not great, I have compiled some 
     initialize_papi();
 
 	papiEvents * events;
-	// Can choose to choose specifically which hardware counters you want by saying something like 
+	// Can choose to choose specifically which hardware counters you want
 	vector<string> event_names = {
     	"PAPI_TOT_CYC", // Total cycles
 	    "PAPI_TOT_INS", // Total inserts into the cache
@@ -41,15 +41,17 @@ Since the documentation regarding PAPI usage is not great, I have compiled some 
     };
     events = start_events(eventNames);
     
-    	// Alternatively, you can just use the default event counters I choose and then use
+    // Alternatively, you can just use the default event counters I choose and then use
     events = start_events();
     
     // Do some work here that you want to track statistics about.
     
     // Stop the events and remove them from the event set.
-    // If you used your own list of hardware counters (let's call it event_names), make sure to pass in event_names.size() as the second parameter.
+    // If you used your own list of hardware counters (let's call it event_names),
+    // make sure to pass in event_names.size() as the second parameter.
+    stop_events(events, event_names.size());
     
-    // Access the events array to get your statistics. Using the events from this example, you could do something like:
+    // Access the events array to get your statistics. Using the events from this example
     std::cout << "Total cycles is: " << events->values[0] << std::endl;
     std::cout << events->values[3] << " L2 cache misses and " << events->values[1] << " loads.\n" << std::endl;
     
