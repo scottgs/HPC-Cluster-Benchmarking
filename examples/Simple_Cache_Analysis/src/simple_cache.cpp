@@ -22,19 +22,19 @@ int main() {
     initialize_papi();
 
 	papiEvents * events;
-	vector<string> eventNames = {
+	vector<string> event_names = {
     	"PAPI_TOT_CYC", // Total cycles
 	    "PAPI_TOT_INS", // Total inserts into the cache
 	    "PAPI_L2_DCA",  // L2 Data Cache Access
 	    "PAPI_L2_DCH"   // L2 Data Cache Hits
         // Can add more events here...
     };
-    events = start_events(eventNames);
+    events = start_events(event_names);
 
     do_some_work(NUM_ITERATIONS);
 
     // Stop the events and remove them from the EventSet.
-    stop_events(events, eventNames.size());
+    stop_events(events, event_names.size());
 
     std::cout << "Total cycles is: " << events->values[0] << std::endl;
     std::cout << events->values[3] << " L2 cache misses and " << events->values[1] << " loads.\n" << std::endl;

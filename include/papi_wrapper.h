@@ -164,7 +164,7 @@ inline papiEvents* start_events(std::vector<std::string> & eventNames) {
 }
 
 // Call to finish collecting counters
-inline void stop_events(papiEvents * events, const unsigned int num_events) {
+inline void stop_events(papiEvents * events, const unsigned int num_events = DEFAULT_NUM_EVENTS) {
     int ret_val;
 
     if ( (ret_val=PAPI_stop(events->eventSet, events->values)) != PAPI_OK ) {

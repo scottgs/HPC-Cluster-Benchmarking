@@ -1,15 +1,25 @@
+# Compiler for MPI programs
 CC = mpicc
-OBJS = mat_mult.o papi_wrapper.o
-EXEC = mm
+
+# Source, Build, BIN, Target directory paths
+SRCDIR = src
+BUILDDIR = build
+BINDIR = bin
+TARGET = bin/mm
+
+SRCEXT = c
+
+# Include all cpp files to use as sources and feed them to use as objects.
+SOURCES = $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
+OBJS = $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
+
 CFLAGS = -std=c99 \
 -Wall -Ofast -march=native \
 -pedantic \
 -m64 \
 -msse4.2 \
 -mfpmath=sse \
--flto 
--funsafe-loop-optimizations \
--DNDEBUG \
+-flto \
 -funroll-loops \
 -floop-strip-mine \
 -ffast-math \
@@ -23,13 +33,22 @@ CFLAGS = -std=c99 \
 -ftree-vectorize \
 --param omega-hash-table-size=10031 \
 
-PAPI_LINK=-lpapi
+# Normal libs to always include
+LIBS = -lpapi
 
-all: $(OBJS)
-	$(CC) $(CFLAGS) $^ $(PAPI_LINK) -o $(EXEC)
+INC = -I include
 
-%.o: %.c
-	$(CC) $(CFLAGS) $< $(PAPI_LINK) -c
+$(TARGET): $(OBJS)
+	@mkdir -p $(BINDIR)
+	$(CC) $^ -o $(TARGET) $(LIBS)
+
+$(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
+	@mkdir -p $(BUILDDIR)
+	$(CC) $(CFLAGS) $(INC) -c -o $@ $<
 
 clean:
-	rm *.o $(EXEC)
+	$(RM) -r $(BUILDDIR) $(TARGET) && $(RM) -r $(BINDIR)
+
+.PHONY: clean
+
+

@@ -7,10 +7,8 @@
 #include "papi_wrapper.h"
 
 #define MIN(x, y) ( (x < y) ? x : y )
-#define IDX_INTO_ARRAY(x, y, dimX) ( x + (y * dimX) ) // since using matrix data as 1D array
+#define IDX_INTO_ARRAY(x, y, dimX) ( x + (y * dimX) )
 #define DATA_VALUE(A, row, col) ( A->data[IDX_INTO_ARRAY(col, row, A->numCols)] )
-
-// #define _DEBUG
 
 typedef struct {
     double * data;
@@ -119,12 +117,27 @@ Matrix* generate_rand_matrix(int numRows, int numCols) {
     return mat;
 }
 
+void check_command_line(int argc, char* argv[]) {
+    if (argc < 4) {
+        printf("Too few arguments!\n");
+        exit(EXIT_FAILURE);
+    }
+    for (unsigned int i = 0; i < argc; ++i) {
+        if (argv[i] == NULL) {
+            printf("One of the arguments is not valid.\n");
+            exit(EXIT_FAILURE);
+        }
+    }
+}
+
 // TODO: use CSV file and write relative timing statistics to file
 // TODO: generate script to constantly run this program on larger and larger input sizes
 int main(int argc, char *argv[]) {
     int processRank, numProcs;
     clock_t start_time, end_time;
     start_time = clock();
+
+    check_command_line(argc, argv);
 
     // Initialize the MPI execution environment
     MPI_Init(&argc, &argv);
