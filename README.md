@@ -7,17 +7,17 @@ The major dependencies include PAPI, Boost and MPI.  For your ease, simply run t
 ## Installing MPI ##
 For instructions on how to install MPI and set your PATH and LD_LIBRARY_PATH variables, check out [this](http://www.itp.phys.ethz.ch/education/hs12/programming_techniques/openmpi.pdf).
 
-## How to compile and run MPI programs ##
-To compile your MPI C++ programs you have to use mpicxx with the same arguments as you would for g++. To run a program with N MPI processes, you would use the following command: 
-
-```
-mpirun -np <number of processors you wish to use> <executable> [program arguments]
-```
-
 ## Code ##
 The source contains the following work in which I have used PAPI to track various statistics:
 * Parallel Matrix Multiplication using MPI (C)
-* Bitonic Sort using MPI (C++) -- Simple one works fine, more complicated MPI still has some bugs
+* Bitonic Sort using MPI (C++)
+
+## Building ##
+Simply run
+```
+make all
+```
+from the top level to build the examples and algorithms located in the src/ folder.
 
 ## Initial Probing of System to Prepare for PAPI Use ##
 * After installing PAPI, run the command: papi_avail -e PAPI_TOT_INS to show the available events and hardware information for use to you.
@@ -55,5 +55,13 @@ Since the documentation regarding PAPI usage is not great, I have compiled some 
     shutdownPapi();
 ```
 
+## How to compile and run MPI programs ##
+To compile your MPI C++ programs you have to use mpicxx with the same arguments as you would for g++. To run a program with N MPI processes, you would use the following command: 
+
+```
+mpirun -np <number of processors you wish to use> <executable> [program arguments]
+```
+
 ## TO-DO ##
-* Create a bash script to execute the Makefiles and test scripts for each algorithm in the src/ folder. Alternative, may use config file and let others pick and choose which algorithms to benchmark.
+* Figure out MPI problems with more complicated Bitonic Sort.
+* Improve documentation on PAPI stuff.
