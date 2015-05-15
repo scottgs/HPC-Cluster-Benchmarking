@@ -91,7 +91,7 @@ inline SortType getPivotIndex(const SortType left, const SortType right) {
  * Sends the max value and receives the min value.
  */
 template <typename SortType, typename CompareType>
-void sendMaxReceiveMin (vector<SortType> & vec, const int otherRank) {
+void sendMaxReceiveMin(vector<SortType> & vec, const int otherRank) {
 	const SortType size = vec.size();
     SortType left  = -1;
     SortType right = size - 1;
