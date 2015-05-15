@@ -27,32 +27,34 @@ Since the documentation regarding PAPI usage is not great, I have compiled some 
 
 ```
 	#include "papi_wrapper.h"
-
- 	// Set up PAPI library environment
-    initializePapi();
+	// Set up PAPI library environment
+    initialize_papi();
 
 	papiEvents * events;
-	vector<string> eventNames = {
+	// Can choose to choose specifically which hardware counters you want by saying something like 
+	vector<string> event_names = {
     	"PAPI_TOT_CYC", // Total cycles
 	    "PAPI_TOT_INS", // Total inserts into the cache
 	    "PAPI_L2_DCA",  // L2 Data Cache Access
 	    "PAPI_L2_DCH"   // L2 Data Cache Hits
         // Can add more events here...
     };
-
-    events = startEvents(eventNames);
-
-    do_some_work();
-
-    // Stop the events and remove them from the EventSet.
-    stopEvents(events);
-	
-	// Just some sample statistics
+    events = start_events(eventNames);
+    
+    	// Alternatively, you can just use the default event counters I choose and then use
+    events = start_events();
+    
+    // Do some work here that you want to track statistics about.
+    
+    // Stop the events and remove them from the event set.
+    // If you used your own list of hardware counters (let's call it event_names), make sure to pass in event_names.size() as the second parameter.
+    
+    // Access the events array to get your statistics. Using the events from this example, you could do something like:
     std::cout << "Total cycles is: " << events->values[0] << std::endl;
     std::cout << events->values[3] << " L2 cache misses and " << events->values[1] << " loads.\n" << std::endl;
     
     // Shutdown PAPI environment.
-    shutdownPapi();
+    shutdown_papi();
 ```
 
 ## How to compile and run MPI programs ##
@@ -64,4 +66,3 @@ mpirun -np <number of processors you wish to use> <executable> [program argument
 
 ## TO-DO ##
 * Figure out MPI problems with more complicated Bitonic Sort.
-* Improve documentation on PAPI stuff.
