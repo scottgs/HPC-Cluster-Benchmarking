@@ -73,5 +73,5 @@ mpirun -np <number of processors you wish to use> <executable> [program argument
 ```
 
 ## TO-DO ##
-* Implement a small statistics tracking performances over time.
+* Implement a small statistics database for tracking performances over time.
 * Write Bash scripts for tracking increasing sizes for the algorithms.
