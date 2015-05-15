@@ -66,5 +66,11 @@ To compile your MPI C++ programs you have to use mpicxx with the same arguments 
 mpirun -np <number of processors you wish to use> <executable> [program arguments]
 ```
 
+### Info about PAPI ###
+* By default PAPI will profile events in all domains (users space, kernel, hypervisor, etc). You can restrict the set of domains for papi event profiling by using the TAU_PAPI_DOMAIN environment variable with these values (in a colon separated list, if desired): PAPI_DOM_USER, PAPI_DOM_KERNEL, PAPI_DOM_SUPERVISOR, and PAPI_DOM_OTHER like this: 
+```
+% setenv TAU_PAPI_DOMAIN PAPI_DOM_SUPERVISOR:PAPI_DOM_OTHER
+```
+
 ## TO-DO ##
 * Figure out MPI problems with more complicated Bitonic Sort.
