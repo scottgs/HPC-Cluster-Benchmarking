@@ -1,4 +1,5 @@
 #include "../include/bitonic_sort.h"
+#include "papi_wrapper.h"
 
 #define MASTER_NODE 0
 
@@ -317,6 +318,17 @@ int main(int argc, char ** argv) {
 
 	const unsigned long listSize = path_and_check<unsigned long>(argc, argv);
 
+    // Set up the PAPI environment.
+    initialize_papi();
+
+    papiEvents * events;
+    vector<string> event_names = {
+        "PAPI_TOT_CYC",             // Total cycles
+        "PAPI_L2_DCA",              // L2 Data Cache Acccess
+        "PAPI_L2_DCH"               // L2 Data Cache Hits
+    };
+    events = start_events(event_names);
+
 	vector<int> nums(listSize);
 
 	// Generate some random data to play with
@@ -371,7 +383,20 @@ int main(int argc, char ** argv) {
  	
  	// Free up my resources used
     delete[] allExtremum;
- 
+
+    // Stop the PAPI event counters
+    stop_events(events, event_names.size());
+    
+    // Print the hardware counter stats
+    cout << "Info for Processor: " << procRank << endl;
+    cout << "Total cycles used is: " << events->values[0] << endl;
+    cout << events->values[1] << " L2 Data Cache Accesses" << endl;
+    cout << events->values[2] << " L2 Data Cache Hits" << endl;
+    cout << "L2 Cache Hit ratio is: " << static_cast<float>(100 * events->values[2] / events->values[1]) << " percentage." << endl;
+
+    // Shutdown PAPI environment.
+    shutdown_papi();
+
 	// Shutdown MPI and release those resources
 	MPI_Finalize();
 

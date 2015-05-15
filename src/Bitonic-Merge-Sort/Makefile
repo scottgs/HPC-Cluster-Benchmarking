@@ -41,11 +41,10 @@ CFLAGS = \
 -fbranch-target-load-optimize \
 -m64 \
 -BOOST_CPPFLAGS \
--BOOST_LDFLAGS \
--D_DEBUG
+-BOOST_LDFLAGS
 
 LIB = -lpapi 
-INC = -I include
+INC = -I include -I ../../include
 
 $(TARGET): $(OBJS)
 	$(CC) $^ -o $(TARGET) $(LIB)
