@@ -73,4 +73,5 @@ mpirun -np <number of processors you wish to use> <executable> [program argument
 ```
 
 ## TO-DO ##
-* Figure out MPI problems with more complicated Bitonic Sort.
+* Implement a small statistics tracking performances over time.
+* Write Bash scripts for tracking increasing sizes for the algorithms.
