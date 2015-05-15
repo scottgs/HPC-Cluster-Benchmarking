@@ -174,11 +174,14 @@ inline void stop_events(papiEvents * events, const unsigned int num_events) {
 
     int event_code;
     for (unsigned int i = 0; i < EVENTS.size(); ++i) {
-        if (EVENTS[i] != EMPTY_ERROR_CODE) {
-            if ( (ret_val = PAPI_remove_event(events->eventSet, event_code)) != PAPI_OK ) {
-                cout << "Failed to remove the event with event code: " << event_code << endl;
-                error_return(ret_val);
-            }
+        if (EVENTS[i] == EMPTY_ERROR_CODE) {
+            break;
+        }
+
+        ret_val = PAPI_remove_event(events->eventSet, EVENTS[i]);
+        if (ret_val != PAPI_OK) {
+            cout << "Failed to remove the event with event code: " << event_code << endl;
+            error_return(ret_val);
         }
     }
 
